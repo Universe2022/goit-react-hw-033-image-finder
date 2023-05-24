@@ -1,36 +1,36 @@
-import { Component } from 'react'; // для класового компонента
-import { createPortal } from 'react-dom'; // для рендеринга в іншому місці
-import css from './Modal.module.css'; // стилізація
+import { Component } from 'react';
+import PropTypes from 'prop-types';
 
-// Пошук модалки щоб динамічно додати до DOM-дерева сторінки
-const modalRoot = document.querySelector('#modal-root');
+import s from '../Modal/Modal.module.css';
 
 export class Modal extends Component {
-
-  // реєструє обробник події keydown на вікні браузера
   componentDidMount() {
-    window.addEventListener('keydown', this.keyDown); // при натисканні клавіші Escape викликає функцію keyDown
+    window.addEventListener('keydown', this.handleKeyDown);
   }
 
-  keyDown = evt => {
-    if (evt.code === 'Escape') {
-      this.props.closeModal(); 
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+  }
+
+  handleKeyDown = e => {
+    if (e.keyCode === 27 || e.currentTarget === e.target) {
+      return this.props.onModalClose();
     }
   };
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.keyDown); 
-  }
-
-  handleClose = (evt) => {
-    if (evt.currentTarget === evt.target) {
-      this.props.closeModal();
-    }
-  }
-
   render() {
-    return createPortal(<div onClick={this.handleClose} className={css.Overlay}>
-      <div className={css.Modal}>{this.props.children}</div>
-    </div>, modalRoot)
+    const { largeImageURL } = this.props;
+    return (
+      <div className={s.Overlay} onClick={this.handleKeyDown}>
+        <div className={s.Modal}>
+          <img src={largeImageURL} alt="" />
+        </div>
+      </div>
+    );
   }
 }
+
+Modal.propTypes = {
+  onModalClose: PropTypes.func,
+  largeImageURL: PropTypes.string.isRequired,
+};

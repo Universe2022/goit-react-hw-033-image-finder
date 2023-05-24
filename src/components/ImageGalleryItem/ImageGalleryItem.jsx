@@ -1,24 +1,33 @@
-import css from './ImageGalleryItem.module.css'; 
 import PropTypes from 'prop-types';
 
-export const ImageGalleryItem = ({ images, togleModal }) => {
+import s from './ImageGalleryItem.module.css';
+
+const ImageGalleryItem = ({
+  webformatURL,
+  largeImageURL,
+  tags,
+  onClickImage,
+}) => {
   return (
     <>
-    
-      {images.map(item => (
-        <li key={item.id} onClick={(evt)=>{togleModal(item.largeImageURL, item.tags);}} className={css.galleryItem}>
-          <img
-            loading="lazy"
-            className={css.ImageGalleryItem}
-            src={item.webformatURL}
-            alt={item.tags}
-          />
-        </li>
-      ))}
+      <li className={s.ImageGalleryItem}>
+        <img
+          onClick={() => onClickImage(largeImageURL)}
+          className={s.ImageGalleryItem__image}
+          src={webformatURL}
+          alt={tags}
+          largeimage={largeImageURL}
+        />
+      </li>
     </>
   );
 };
 
 ImageGalleryItem.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.object).isRequired, 
+  onClickImage: PropTypes.func,
+  webformatURL: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
 };
+
+export default ImageGalleryItem;
